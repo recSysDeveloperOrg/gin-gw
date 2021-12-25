@@ -1,0 +1,102 @@
+syntax = "proto3";
+option go_package = "./idl/gen/movie";
+
+message BaseResp {
+    int64 err_no = 1;
+    string err_msg = 2;
+}
+enum RecommendReasonType {
+    RECOMMEND_REASON_TYPE_TAG = 0;
+    RECOMMEND_REASON_TYPE_MOVIE = 1;
+    RECOMMEND_REASON_TYPE_LOG = 2;
+    RECOMMEND_REASON_TYPE_TOP_K = 3;
+}
+message Participant {
+    string character = 1;
+    string name = 2;
+}
+message RecommendReason {
+    Movie movie_reason = 1;
+    string tag_reason = 2;
+    RecommendReasonType reason_type = 3;
+}
+message Movie {
+    string id = 1;
+    string title = 2;
+    string pic_url = 3;
+    optional string introduction = 4;
+    repeated Participant participant = 5;
+    optional string release_date = 6;
+    optional string language = 7;
+    optional RecommendReason reason = 8;
+    optional double average_rating = 9;
+}
+
+message RecommendReq {
+    int64 page = 1;
+    int64 offset = 2;
+    string user_id = 3;
+}
+message RecommendResp {
+    BaseResp base_resp = 1;
+    repeated Movie movies = 2;
+    int64 n_recommend = 3; // 系统总的推荐数量, 用于判定是否有下一页
+}
+
+message MovieDetailReq {
+    string id = 1;
+    string user_id = 2;
+}
+message MovieDetailResp {
+    BaseResp base_resp = 1;
+    Movie movie = 2;
+}
+
+message SearchReq {
+    string keyword = 1;
+    int64 page = 2;
+    int64 offset = 3;
+}
+enum MovieSearchEntryType {
+    MOVIE_SEARCH_ENTRY_TYPE_TITLE = 0;
+    MOVIE_SEARCH_ENTRY_TYPE_DETAIL = 1;
+}
+message MovieSearchEntry {
+    MovieSearchEntryType ms_entry_type = 1;
+    Movie movie = 2;
+}
+message SearchResp {
+    BaseResp base_resp = 1;
+    repeated MovieSearchEntry movies = 2;
+    int64 n_search = 3; // 搜索结果总数, 用于判定是否有下一页
+}
+
+enum FeedbackType {
+    FEEDBACK_TYPE_MOVIE = 0;
+    FEEDBACK_TYPE_CATEGORY = 1;
+}
+message FeedbackReq {
+    FeedbackType fb_type = 1;
+    string source_id = 2;
+    string user_id = 3;
+}
+message FeedbackResp {
+    BaseResp base_resp = 1;
+}
+
+message ModifyMovieRatingReq {
+    string movie_id = 1;
+    double n_update = 2;
+    bool is_new_user = 3;
+}
+message ModifyMovieRatingResp {
+    BaseResp base_resp = 1;
+}
+
+service MovieService {
+    rpc RecommendMovies(RecommendReq) returns (RecommendResp) {}
+    rpc GetMovieDetail(MovieDetailReq) returns (MovieDetailResp) {}
+    rpc SearchMovies(SearchReq) returns (SearchResp) {}
+    rpc RecommendFeedback(FeedbackReq) returns (FeedbackResp) {}
+    rpc ModifyMovieRating(ModifyMovieRatingReq) returns (ModifyMovieRatingResp) {}
+}

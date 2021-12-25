@@ -1,0 +1,73 @@
+syntax = "proto3";
+package rating;
+
+option go_package = "idl/gen/rating";
+
+message BaseResp {
+    int64 err_no = 1;
+    string err_msg = 2;
+}
+enum RecommendReasonType {
+    RECOMMEND_REASON_TYPE_TAG = 0;
+    RECOMMEND_REASON_TYPE_MOVIE = 1;
+    RECOMMEND_REASON_TYPE_LOG = 2;
+    RECOMMEND_REASON_TYPE_TOP_K = 3;
+}
+message Participant {
+    string character = 1;
+    string name = 2;
+}
+message RecommendReason {
+    Movie movie_reason = 1;
+    string tag_reason = 2;
+    RecommendReasonType reason_type = 3;
+}
+message Movie {
+    string id = 1;
+    string title = 2;
+    string pic_url = 3;
+    optional string introduction = 4;
+    repeated Participant participant = 5;
+    optional string release_date = 6;
+    optional string language = 7;
+    optional RecommendReason reason = 8;
+    optional double average_rating = 9;
+}
+message RateRecord {
+    Movie movie = 1;
+    double rating = 2;
+}
+
+message RateReq {
+    string movie_id = 1;
+    string user_id = 2;
+    double rating = 3;
+}
+message RateResp {
+    BaseResp base_resp = 1;
+}
+message QueryRateRecordsReq {
+    string user_id = 1;
+    int64 page = 2;
+    int64 offset = 3;
+}
+message QueryRateRecordsResp {
+    BaseResp base_resp = 1;
+    repeated RateRecord records = 2;
+    int64 n_records = 3;
+}
+
+message QueryMovieRatingReq {
+    string user_id = 1;
+    repeated string movie_id_list = 2;
+}
+message QueryMovieRatingResp {
+    BaseResp base_resp = 1;
+    map<string,double> movie_id2_personal_rating = 2;
+}
+
+service RatingService {
+    rpc RateMovie(RateReq) returns (RateResp) {}
+    rpc QueryRateRecords(QueryRateRecordsReq) returns (QueryRateRecordsResp) {}
+    rpc BatchQueryMovieRating(QueryMovieRatingReq) returns (QueryMovieRatingResp) {}
+}
