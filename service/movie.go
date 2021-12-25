@@ -14,7 +14,7 @@ func RecommendMovies(c *gin.Context) {
 }
 
 func GetMovieDetail(c *gin.Context) {
-	resp, _ := rpc.MovieGetDetail(c.GetString("userID"), c.PostForm("movieID"))
+	resp, _ := rpc.MovieGetDetail(c.GetString("userID"), c.Param("id"))
 	c.JSONP(200, resp)
 }
 
