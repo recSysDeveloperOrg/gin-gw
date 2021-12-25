@@ -1,18 +1,20 @@
 package router
 
 import (
+	"gin-gateway/middleware"
 	"gin-gateway/service"
 	"github.com/gin-gonic/gin"
 )
 
 func Init() {
 	r := gin.Default()
+	r.Use(middleware.JwtAuth)
 	v1 := r.Group("/v1")
 	{
 		movie := v1.Group("/movie")
 		{
 			movie.POST("/recommend", service.RecommendMovies)
-			movie.GET("/:id", service.GetMovieDetail)
+			movie.POST("/:id", service.GetMovieDetail)
 			movie.POST("/search", service.SearchMovies)
 			movie.POST("/recommend-feedback", service.RecommendFeedback)
 		}
