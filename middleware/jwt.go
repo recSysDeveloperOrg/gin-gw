@@ -9,11 +9,13 @@ func JwtAuth(c *gin.Context) {
 	accessToken, ok := c.GetPostForm("accessToken")
 	if ok {
 		resp, err := rpc.UserQuery(rpc.TokenTypeAccess, accessToken)
-		if resp.BaseResp.ErrNo != 0 || err != nil {
+		if err != nil {
 			c.JSONP(500, err)
 			return
 		}
-		c.Set("userID", resp.User.Id)
+		if resp.User != nil {
+			c.Set("userID", resp.User.Id)
+		}
 	}
 
 	c.Next()
