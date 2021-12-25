@@ -27,5 +27,5 @@ func SearchMovies(c *gin.Context) {
 
 func RecommendFeedback(c *gin.Context) {
 	resp, _ := rpc.MovieRecommendFeedback(c.PostForm("ft"), c.PostForm("sourceID"), c.GetString("userID"))
-	c.JSONP(resp)
+	c.JSONP(200, resp)
 }
