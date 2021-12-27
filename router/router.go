@@ -9,6 +9,7 @@ import (
 func Init() {
 	r := gin.Default()
 	r.Use(middleware.JwtAuth)
+	r.Use(middleware.Cors)
 	v1 := r.Group("/v1")
 	{
 		movie := v1.Group("/movie")

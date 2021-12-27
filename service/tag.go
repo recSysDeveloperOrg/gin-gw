@@ -7,7 +7,7 @@ import (
 )
 
 func CreateTag(c *gin.Context) {
-	resp, _ := rpc.TagCreate(c.PostForm("userID"), c.PostForm("movieID"), c.PostForm("tag"))
+	resp, _ := rpc.TagCreate(c.GetString("userID"), c.PostForm("movieID"), c.PostForm("tag"))
 	c.JSONP(200, resp)
 }
 
